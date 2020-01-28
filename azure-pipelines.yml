@@ -1,0 +1,61 @@
+# Docker
+# Build and push an image to Azure Container Registry
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  branches:
+    include:
+      - master
+      - staging
+
+resources:
+- repo: self
+
+variables:
+  # Container registry service connection established during pipeline creation
+  dockerRegistryServiceConnection: 'f8210e07-e0cc-4fb8-b7cb-1c1adbff4ecf'
+  imageRepository: 'shippyvessel'
+  containerRegistry: 'shippyacr.azurecr.io'
+  dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
+  tag: 'latest' #'$(Build.BuildId)'
+  
+  # Agent VM image name
+  vmImageName: 'ubuntu-latest'
+
+stages:
+- stage: Test
+  displayName: Test code
+  jobs:
+  - job: Test
+    displayName: Testing job
+    steps: 
+      - task: GoTool@0
+        inputs:
+          version: '1.13.5'
+      - task: Go@0
+        inputs:
+          command: 'get'
+          arguments: '-d'
+          workingDirectory: '$(System.DefaultWorkingDirectory)'
+      # - task: Go@0
+      #   inputs:
+      #     command: 'test'
+      #     arguments: '-v'
+      #     workingDirectory: '$(System.DefaultWorkingDirectory)'
+- stage: Build
+  displayName: Build and push stage
+  jobs:  
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: Docker@2
+      displayName: Build and push an image to container registry
+      inputs:
+        command: buildAndPush
+        repository: $(imageRepository)
+        dockerfile: $(dockerfilePath)
+        containerRegistry: $(dockerRegistryServiceConnection)
+        tags: |
+          $(tag)
