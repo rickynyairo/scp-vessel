@@ -1,0 +1,38 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: vessel
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vessel
+  template:
+    metadata:
+      labels:
+        app: vessel
+    spec:
+        containers:
+        - name: vessel-service
+          image: shippyacr.azurecr.io/shippy/vessel-service:latest
+          imagePullPolicy: Always
+          command: [
+            "./vessel-service",
+            "--selector=static",
+            "--server_address=:8080",
+          ]
+          env:
+          - name: DB_HOST
+            value: "mongo:27017"
+          - name: UPDATED_AT
+            value: "Mon 19 Mar 2018 12:05:58 GMT"
+          ports:
+          - containerPort: 8080
+            name: vessel-port
+          resources:
+            requests:
+                memory: "64Mi"
+                cpu: "250m"
+            limits:
+                memory: "128Mi"
+                cpu: "500m"

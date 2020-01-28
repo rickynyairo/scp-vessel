@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	micro "github.com/micro/go-micro"
+	k8s "github.com/micro/kubernetes/go/micro"
 	pb "github.com/rickynyairo/scp-vessel/proto/vessel"
 	"log"
 	"os"
@@ -14,9 +15,10 @@ const (
 )
 
 func main() {
-	srv := micro.NewService(
+	srv := k8s.NewService(
 		// the name should equal the package name provided in the proto definition
 		micro.Name("vessel"),
+		micro.Version("latest")
 	)
 
 	srv.Init()
