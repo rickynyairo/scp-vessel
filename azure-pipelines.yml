@@ -13,7 +13,7 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'f8210e07-e0cc-4fb8-b7cb-1c1adbff4ecf'
+  dockerRegistryServiceConnection: '24163255-7e20-4559-a5fd-90fd31474e6a'
   imageRepository: 'shippyvessel'
   containerRegistry: 'shippyacr.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
