@@ -4,7 +4,11 @@ import (
 	"context"
 	"fmt"
 	micro "github.com/micro/go-micro"
-	k8s "github.com/micro/kubernetes/go/micro"
+	k8s "github.com/micro/go-plugins/registry/kubernetes"
+
+	// static selector offloads load balancing to k8s services
+	// note: requires user to create k8s services
+	"github.com/micro/go-plugins/client/selector/static"
 	pb "github.com/rickynyairo/scp-vessel/proto/vessel"
 	"log"
 	"os"
@@ -15,10 +19,14 @@ const (
 )
 
 func main() {
-	srv := k8s.NewService(
+	srv := micro.NewService(
 		// the name should equal the package name provided in the proto definition
 		micro.Name("vessel"),
-		micro.Version("latest")
+		micro.Version("latest"),
+
+		// in order to offload service discovery and load balancing to kubernetes
+		micro.Registry(k8s.NewRegistry()),
+		micro.Selector(static.NewSelector()),
 	)
 
 	srv.Init()

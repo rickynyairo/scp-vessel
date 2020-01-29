@@ -14,7 +14,7 @@ spec:
     spec:
         containers:
         - name: vessel-service
-          image: shippyacr.azurecr.io/shippy/vessel-service:latest
+          image: shippyacr.azurecr.io/vessel-service:latest
           imagePullPolicy: Always
           command: [
             "./vessel-service",
